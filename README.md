@@ -1,2 +1,0 @@
-# CTO
-Carriera CTO
