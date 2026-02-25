@@ -1,2 +1,2 @@
 # CTO
-Candidatura CTO
+Carriera CTO
