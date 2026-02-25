@@ -1,1 +1,183 @@
+# Test Tecnico - Chief Technology Officer (CTO)
+## Infrastruttura, Strategia e Visione
 
+**Profilo:** CTO / Founding Engineer  
+**Output richiesto:** Documento di architettura + PoC infrastrutturale + Piano di sviluppo
+
+---
+
+## CONTESTO AZIENDALE
+
+**AgentFlow S.r.l.** (nome di progetto)
+
+Siamo una startup in fase pre-seed che costruisce una piattaforma SaaS B2B per l'automazione intelligente di processi aziendali. La nostra proposta di valore è duplice:
+
+1. **Per startup da zero:** forniamo l'infrastruttura per "agentificare" l'intera operatività aziendale sin dal giorno zero
+2. **Per PMI esistenti:** consentiamo di trasformare processi manuali in flussi automatizzati basati su agenti AI
+
+**Il nostro asset strategico:** un LLM proprietario, addestrato e ottimizzato per il contesto operativo italiano delle PMI, eseguito **interamente in locale** (on-premise o VPC dedicato) per garantire:
+- Sovranità dei dati dei clienti
+- Costi prevedibili senza dipendenza da API esterne
+- Latenza minima per operazioni in tempo reale
+
+**Fase attuale:** abbiamo un prototipo funzionante con API OpenAI. Ora dobbiamo industrializzare la soluzione con modelli open source auto-ospitati.
+
+---
+
+## IL TUO RUOLO
+
+Entri come **CTO / Co-founder** con responsabilità complete su:
+- Architettura della piattaforma SaaS multi-tenant
+- Infrastruttura GPU per inferenza e fine-tuning locale
+- Strategia tecnica e roadmap di prodotto
+- Costruzione e leadership del team engineering
+- Decisioni critiche su trade-off tecnologia/business
+
+Dovrai **scendere nel codice quando serve**, ma soprattutto **garantire che le fondamenta architetturali reggano la crescita**.
+
+---
+
+## VINCOLI STRATEGICI
+
+- **Funding attuale:** €500k in seed round (appena chiuso)
+- **Runway:** 12 mesi
+- **Team iniziale:** tu + 2 sviluppatori (full-stack e ML engineer) da assumere
+- **Primi clienti pilota:** 3 aziende italiane (logistica, manifatturiero, servizi)
+- **Infrastruttura target:** on-premise / cloud privato con GPU (NVIDIA H100/A100 o equivalenti)
+- **Modelli di riferimento:** Llama 3, Mistral, Qwen (da valutare per fine-tuning)
+
+---
+
+## PARTE A — ARCHITETTURA E STRATEGIA · 40 PUNTI
+
+### A1. Visione architetturale della piattaforma
+
+Disegna l'architettura **completa** della piattaforma AgentFlow, considerando:
+
+- **Multi-tenancy:** come isoli dati, configurazioni e workload di clienti diversi? 
+- **Agent orchestration:** come coordini agenti AI che operano per conto di clienti diversi? 
+- **Infrastruttura LLM locale:** come gestisci inferenza, caching, e fine-tuning su GPU condivise?
+- **Integrazione con sistemi legacy dei clienti:** API, webhook, automazione browser quando necessario
+- **Osservabilità e monitoring:** come misuri performance, costi e qualità per cliente?
+
+**Domanda dentro la domanda:** Quale componente **NON** costruisci internamente e affidi a terze parti (e perché)? Quale invece costruisci nonostante esista già una soluzione pronta?
+
+### A2. Strategia di deployment LLM
+
+Confronta almeno **tre approcci** per l'esecuzione locale del modello:
+
+| Approccio | Vantaggi | Svantaggi | Costo stimato |
+|-----------|----------|-----------|---------------|
+| vLLM su GPU dedicate | | | |
+| Ollama + orchestrazione custom | | | |
+| Framework distribuito (Ray + DeepSpeed) | | | |
+| Soluzione cloud-managed (Sagemaker, etc.) | | | |
+
+**Decisione:** Quale approccio scegli per la fase pilota (3 clienti) e quale per la scala (50+ clienti)? Giustifica il trade-off.
+
+### A3. Il piano di sviluppo a 12 mesi
+
+Dato il funding di €500k e 12 mesi di runway:
+
+1. **Roadmap tecnica:** quali milestone raggiungi a M3, M6, M12?
+2. **Piano assunzioni:** chi assumi, quando, con quali competenze? 
+3. **Allocazione budget:** quanto per infrastruttura, quanto per stipendi, quanto per R&D?
+4. **Metriche di successo:** quali KPI tecnici e di business misuri per valutare il progresso?
+
+---
+
+## PARTE B — DECISIONI CRITICHE · 35 PUNTI
+
+### B1. Il dilemma del modello: fine-tuning vs RAG
+
+I primi clienti pilota hanno esigenze contrastanti:
+
+- **Cliente A (logistica):** vuole un modello specializzato sui suoi documenti (DDT, bolle, ordini) — ha 50k documenti storici
+- **Cliente B (manifatturiero):** vuole assistenza su manuali tecnici — ha 200 manuali in PDF, aggiornati ogni mese
+- **Cliente C (servizi):** vuole automazione email — ha pochi dati, ma necessità di bassissima latenza
+
+**La tua scelta architetturale:** come disegni il sistema per servire tutti e tre senza moltiplicare i costi?
+
+- Fai fine-tuning su modello base condiviso? Separato per cliente?
+- Usi RAG su knowledge base per tutti? 
+- Quanto è praticabile un approccio ibrido?
+
+Descrivi la soluzione concreta, con:
+- Architettura di riferimento
+- Stima di costi GPU e storage
+- Trade-off tra qualità, latenza e costo
+
+### B2. La scelta infrastrutturale
+
+Hai due opzioni per l'infrastruttura GPU:
+
+**Opzione 1:** Acquisto hardware proprio (4x NVIDIA H100, €120k)
+**Opzione 2:** Noleggio on-demand da provider italiano (€15k/mese per potenza equivalente)
+
+| Fattore | Opzione 1 | Opzione 2 |
+|---------|-----------|-----------|
+| Capex iniziale | | |
+| Opex mensile | | |
+| Scalabilità | | |
+| Sovranità dati | | |
+| Manutenzione | | |
+
+Quale scegli e perché? La risposta cambia se chiudi il primo cliente enterprise da 100k€/anno?
+
+### B3. L'incidente in produzione
+
+Sei in produzione con 5 clienti. Un venerdì pomeriggio, il sistema comincia a produrre risposte **inappropriate** per uno di loro — un'azienda manifatturiera che usa l'AI per assistenza su macchinari. Le risposte sono tecnicamente corrette ma il tono è inappropriato (e.g., troppo informale, a volte sarcastico).
+
+Non è un attacco — è un **drift del modello** dovuto a un fine-tuning recente su dati non perfettamente allineati.
+
+**Cosa fai nelle prossime 4 ore?** Descrivi:
+
+1. Le tue azioni immediate (tecnica e comunicazione con cliente)
+2. Come diagnostichi il problema
+3. Come decidi se rollback o patch
+4. Cosa cambi nel processo di fine-tuning per prevenire ricorrenza
+
+---
+
+## PARTE C — VISIONE E LEADERSHIP · 25 PUNTI
+
+### C1. La riunione con gli investitori
+
+Tra 6 mesi devi presentare progresso agli investitori. Prepari la tua narrative.
+
+Scrivi il discorso (max 1 pagina) che farai, che deve includere:
+
+- Dove siamo oggi (tecnologia, clienti, team)
+- Cosa abbiamo imparato (errori compresi)
+- Dove andiamo nei prossimi 12 mesi
+- Cosa chiediamo agli investitori (prossimo round)
+
+**La parte difficile:** includi onestamente **un fallimento significativo** che hai avuto e come l'hai trasformato in apprendimento.
+
+### C2. Costruire la cultura tecnica
+
+Sei il primo CTO. Devi assumere i primi 3 ingegneri e stabilire una cultura tecnica che duri.
+
+Descrivi:
+
+- **Le prime 3 assunzioni:** che profili cerchi, in che ordine, perché
+- **I principi tecnici** che stabilisci fin dal giorno 1 (es. "documentazione come prerequisito", "test prima del codice", "ownership distribuita")
+- **Come bilanci** velocità di execution con qualità architetturale a lungo termine 
+- **Come gestisci** il tuo tempo tra coding, strategia, e gestione persone
+
+### C3. La domanda impossibile
+
+> *"Tra 3 anni, qualcuno comprerà la nostra azienda. Cosa avremo costruito che varrà 100 milioni?"*
+
+Rispondi con:
+
+- La tua visione di prodotto a lungo termine
+- I pilastri tecnologici che dovremo avere
+- Le barriere all'entrata che costruiremo
+- I rischi più grandi che potrebbero far fallire tutto
+
+---
+
+## OUTPUT RICHIESTO
+
+Crea un repository GitHub privato strutturato così:
